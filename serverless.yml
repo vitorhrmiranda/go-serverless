@@ -1,0 +1,66 @@
+service: serverless
+
+provider:
+  name: aws
+  runtime: go1.x
+  region: us-east-1
+  stage: local
+  memorySize: 128
+  timeout: 3
+
+plugins:
+  - serverless-localstack
+
+custom:
+  localstack:
+    stages:
+      - local
+    autostart: false
+    debug: true
+    docker:
+      sudo: false
+    host: http://172.16.0.11
+
+resources:
+  Resources:
+    Consumer:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: consumer
+
+    DynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 10
+          WriteCapacityUnits: 10
+        TableName: users
+
+functions:
+  user_filter_nick:
+    handler: bin/user_filter_nick
+    events:
+      - sqs: arn:aws:sqs:us-east-1:000000000000:consumer
+    environment:
+      SERVER_ENVIRONMENT: development
+      DEFAULT_REGION: us-east-1
+      DYNAMODB_AWS_ENDPOINT: http://172.16.0.11:4566
+      TABLE_NAME: users
+  user_gen_password:
+    handler: bin/user_gen_password
+    events:
+      - sqs: arn:aws:sqs:us-east-1:000000000000:consumer
+    environment:
+      SERVER_ENVIRONMENT: development
+      DEFAULT_REGION: us-east-1
+      DYNAMODB_AWS_ENDPOINT: http://172.16.0.11:4566
+      TABLE_NAME: users

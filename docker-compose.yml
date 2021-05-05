@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+  awslocal:
+    image: localstack/localstack:0.12.10
+    container_name: awslocal
+    environment:
+      - LAMBDA_EXECUTOR=docker
+      - LAMBDA_REMOTE_DOCKER=true
+      - LAMBDA_DOCKER_NETWORK=serverless_dev_net
+      - HOSTNAME_EXTERNAL=awslocal
+      - KINESIS_ERROR_PROBABILITY=0.0
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - DEBUG=1
+    networks:
+      dev_net:
+        ipv4_address: 172.16.0.11
+    ports:
+      - "4566:4566"
+      - "4571:4571"
+      - "8055:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+  dev_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.16.0.10/24"
