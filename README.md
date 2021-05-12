@@ -1,4 +1,4 @@
-# Localstack management with Serverless Framawork
+# Localstack management with Serverless Framework
 
 <h1 align="center">
     <img src="https://res.cloudinary.com/yugovtr/image/upload/v1620795932/1_CxoqbfJvD8PDBRcHVmirHQ-removebg-preview_qjjrk4.png" />
@@ -36,6 +36,5 @@ make scan
 docker logs --tail 1000 -f awslocal
 ```
 
-> Output 
+> Output
 ![image](https://user-images.githubusercontent.com/76954948/117922710-432b1680-b2c9-11eb-87d1-8935fa0558c6.png)
-
