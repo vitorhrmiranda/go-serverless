@@ -26,11 +26,14 @@ func handler(sqsEvent events.SQSEvent) (err error) {
 
 		usr := new(entity.User)
 
+		fmt.Printf("MESSAGE BODY: %s\n", message.Body)
+
 		if err := json.Unmarshal([]byte(message.Body), usr); err != nil {
-			return err
+			return fmt.Errorf("Unmarshal: %s", err)
 		}
 
 		if len(usr.Password) == 0 {
+			usr.ID += "-pwd"
 			usr.Password = faker.Password()
 		}
 

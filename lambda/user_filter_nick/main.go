@@ -14,6 +14,10 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
+type Body struct {
+	User entity.User `json:"Message"`
+}
+
 func handler(sqsEvent events.SQSEvent) (err error) {
 
 	fmt.Println("RUNNING - user_filter_nick")
@@ -27,8 +31,10 @@ func handler(sqsEvent events.SQSEvent) (err error) {
 
 		usr := new(entity.User)
 
+		fmt.Printf("MESSAGE BODY: %s\n", message.Body)
+
 		if err := json.Unmarshal([]byte(message.Body), usr); err != nil {
-			return err
+			return fmt.Errorf("Unmarshal: %s", err)
 		}
 
 		usr.Nick = strings.ToLower(usr.Nick)

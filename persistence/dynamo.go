@@ -1,6 +1,8 @@
 package persistence
 
 import (
+	"fmt"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -35,11 +37,12 @@ func NewDynamoDB() (DynamoDB, error) {
 	return impl, nil
 }
 
-func (db *DynamoDB) Create(usr *entity.User) (err error) {
+func (db *DynamoDB) Create(usr *entity.User) error {
+
 	item, err := dynamodbattribute.MarshalMap(usr)
 
 	if err != nil {
-		return err
+		return fmt.Errorf("MarshalMap: %s", err)
 	}
 
 	input := &dynamodb.PutItemInput{
@@ -47,7 +50,9 @@ func (db *DynamoDB) Create(usr *entity.User) (err error) {
 		Item:      item,
 	}
 
-	_, err = db.c.PutItem(input)
+	if _, err := db.c.PutItem(input); err != nil {
+		return fmt.Errorf("PutItem: %s", err)
+	}
 
-	return err
+	return nil
 }

@@ -9,9 +9,9 @@ setup:
 	sls deploy
 
 notify:
-	awslocal sqs send-message \
-		--queue-url http://awslocal:4566/000000000000/consumer \
-		--message-body file://input.json
+	awslocal sns publish \
+		--topic-arn arn:aws:sns:us-east-1:000000000000:Publisher \
+		--message file://input.json
 
 scan:
 	awslocal dynamodb scan --table-name=users

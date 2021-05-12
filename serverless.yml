@@ -23,11 +23,40 @@ custom:
 
 resources:
   Resources:
-    Consumer:
+
+    # SQS
+    Consumer1:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: consumer
+        QueueName: Consumer1
+    Consumer2:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: Consumer2
 
+    #SNS
+    Publisher:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: Publisher
+
+    #Subscriptions
+    Subscription1:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: sqs
+        Endpoint: {GetAtt: Consumer1.Arn}
+        TopicArn: {GetAtt: Publisher.Arn}
+        RawMessageDelivery: 'true'
+    Subscription2:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Protocol: sqs
+        Endpoint: {GetAtt: Consumer2.Arn}
+        TopicArn: {GetAtt: Publisher.Arn}
+        RawMessageDelivery: 'true'
+
+    #Database
     DynamoDbTable:
       Type: 'AWS::DynamoDB::Table'
       DeletionPolicy: Retain
@@ -49,7 +78,7 @@ functions:
   user_filter_nick:
     handler: bin/user_filter_nick
     events:
-      - sqs: arn:aws:sqs:us-east-1:000000000000:consumer
+      - sqs: arn:aws:sqs:us-east-1:000000000000:Consumer1
     environment:
       SERVER_ENVIRONMENT: development
       DEFAULT_REGION: us-east-1
@@ -58,7 +87,7 @@ functions:
   user_gen_password:
     handler: bin/user_gen_password
     events:
-      - sqs: arn:aws:sqs:us-east-1:000000000000:consumer
+      - sqs: arn:aws:sqs:us-east-1:000000000000:Consumer2
     environment:
       SERVER_ENVIRONMENT: development
       DEFAULT_REGION: us-east-1
