@@ -2,7 +2,6 @@
 
 <h1 align="center">
     <img src="https://res.cloudinary.com/yugovtr/image/upload/v1620795932/1_CxoqbfJvD8PDBRcHVmirHQ-removebg-preview_qjjrk4.png" />
-
 </h1>
 
 This repository is a proof of concept (PoC) of using the `Serverless` framework to manage the infrastructure dependencies for `AWS` in a development environment with `Localstack`
@@ -17,6 +16,7 @@ This repository is a proof of concept (PoC) of using the `Serverless` framework 
 
 ### Install
 ```bash
+docker-compose up -d
 make setup
 ```
 
