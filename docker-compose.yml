@@ -7,7 +7,7 @@ services:
     environment:
       - LAMBDA_EXECUTOR=docker
       - LAMBDA_REMOTE_DOCKER=true
-      - LAMBDA_DOCKER_NETWORK=serverless_dev_net
+      - LAMBDA_DOCKER_NETWORK=go-serverless_dev_net
       - HOSTNAME_EXTERNAL=awslocal
       - KINESIS_ERROR_PROBABILITY=0.0
       - DOCKER_HOST=unix:///var/run/docker.sock
@@ -21,6 +21,19 @@ services:
       - "8055:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+
+  serverless:
+    container_name: serverless
+    build: 
+      context: .
+      dockerfile: docker/serverless.Dockerfile
+    volumes:
+      - .:/app
+    environment:
+      - LOCALSTACK_HOST=172.16.0.11
+    networks: 
+      dev_net:
+        ipv4_address: 172.16.0.13
 
 networks:
   dev_net:
